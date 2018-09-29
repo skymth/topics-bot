@@ -38,18 +38,17 @@ func crawle() ([]Topic, error) {
 	}
 
 	urls := make([]string, 0, 5)
-	//TODO リンクをとる
-	//	doc.Find(".r").Each(func(_ int, srg *goquery.Selection) {
-	//		srg.Find("a").Each(func(_ int, s *goquery.Selection) {
-	//			href, exists := s.Attr("href")
-	//			if exists {
-	//				reqUrl, err := baseUrl.Parse(href)
-	//				if err == nil {
-	//					urls = append(urls, reqUrl.String())
-	//				}
-	//			}
-	//		})
-	//	})
+	doc.Find("h2").Each(func(_ int, srg *goquery.Selection) {
+		srg.Find("a").Each(func(_ int, s *goquery.Selection) {
+			href, exists := s.Attr("href")
+			if exists {
+				reqUrl, err := baseUrl.Parse(href)
+				if err == nil {
+					urls = append(urls, reqUrl.String())
+				}
+			}
+		})
+	})
 
 	topics := make([]Topic, len(urls))
 	for i, url := range urls {

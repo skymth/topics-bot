@@ -40,5 +40,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(topics)
+	for _, v := range topics {
+		fmt.Println(v)
+	}
 }
