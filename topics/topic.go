@@ -38,6 +38,8 @@ func crawle() ([]Topic, error) {
 	}
 
 	urls := make([]string, 0, 5)
+	titles := make([]string, 0, 5)
+	descriptions := make([]string, 0, 5)
 	doc.Find("h2").Each(func(_ int, srg *goquery.Selection) {
 		srg.Find("a").Each(func(_ int, s *goquery.Selection) {
 			href, exists := s.Attr("href")
@@ -47,12 +49,19 @@ func crawle() ([]Topic, error) {
 					urls = append(urls, reqUrl.String())
 				}
 			}
+			titles = append(titles, s.Text())
 		})
 	})
 
+	doc.Find("p.excerpt").Each(func(_ int, s *goquery.Selection) {
+		descriptions = append(descriptions, s.Text())
+	})
+
 	topics := make([]Topic, len(urls))
-	for i, url := range urls {
-		topics[i].URL = url
+	for i, _ := range urls {
+		topics[i].Title = titles[i]
+		topics[i].URL = urls[i]
+		topics[i].Description = descriptions[i]
 	}
 
 	return topics, nil
