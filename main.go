@@ -1,46 +1,51 @@
 package main
 
 import (
-	"bytes"
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 
-	"github.com/skymth/topics-bot/topics"
+	"github.com/nlopes/slack"
 )
 
 const (
 	endpoint = "https://hooks.slack.com/services/"
 )
 
-var (
-	accessToken = os.Getenv("SLACK_TOKEN")
-)
+type Slack struct {
+	client    *slack.Client
+	botID     string
+	channelID string
+}
 
-func sendTopics() error {
-	//TODO ここでdataを添付
-	data := `{"text":"` + "" + `"}`
-	body := bytes.NewBuffer([]byte(data))
-
-	url := endpoint + accessToken
-	req, _ := http.NewRequest("POST", url, body)
-	req.Header.Set("Content-Type", "application/json")
-	_, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Fatal(err)
+func run() int {
+	var env EnvConfig
+	if err := env.SetEnv(); err != nil {
+		log.Println(err)
+		return 1
 	}
 
-	return nil
+	api := slack.New(env.BotToken)
+	s := &Slack{
+		client:    api,
+		botID:     env.BotID,
+		channelID: env.ChannelID,
+	}
+
+	rtm := api.NewRTM()
+	go rtm.ManageConnection()
+
+	for msg := range rtm.IncomingEvents {
+		switch ev := msg.Data.(type) {
+		case *slack.MessageEvent:
+			log.Println("[INFO] get message")
+			if err := s.TopicsPostHandler(ev); err != nil {
+				log.Println("[ERROR] message handler failed: %v\n", err)
+			}
+		}
+	}
+	return 0
 }
 
 func main() {
-	topics, err := topics.GetTopics()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, v := range topics {
-		fmt.Println(v)
-	}
+	os.Exit(run())
 }
