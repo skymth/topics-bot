@@ -14,32 +14,30 @@ type EnvConfig struct {
 	ChannelID         string
 }
 
-func (c *EnvConfig) SetEnv() error {
+func SetEnv() (*EnvConfig, error) {
 	channelID, err := lookUpEnv("CHANNEL_ID")
 	if err != nil {
-		return errors.Wrap(err, "channelID not found")
+		return nil, errors.Wrap(err, "channelID not found")
 	}
 	botID, err := lookUpEnv("BOT_ID")
 	if err != nil {
-		return errors.Wrap(err, "bot id not found")
+		return nil, errors.Wrap(err, "bot id not found")
 	}
 	verificationToken, err := lookUpEnv("VERIFICATION_TOKEN")
 	if err != nil {
-		return errors.Wrap(err, "verification token not found")
+		return nil, errors.Wrap(err, "verification token not found")
 	}
 	botToken, err := lookUpEnv("BOT_TOKEN")
 	if err != nil {
-		return errors.Wrap(err, "bot token not found")
+		return nil, errors.Wrap(err, "bot token not found")
 	}
 
-	c = &EnvConfig{
+	return &EnvConfig{
 		ChannelID:         channelID,
 		BotID:             botID,
 		VerificationToken: verificationToken,
 		BotToken:          botToken,
-	}
-
-	return nil
+	}, nil
 }
 
 func lookUpEnv(key string) (string, error) {

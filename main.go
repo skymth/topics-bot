@@ -18,8 +18,8 @@ type Slack struct {
 }
 
 func run() int {
-	var env EnvConfig
-	if err := env.SetEnv(); err != nil {
+	env, err := SetEnv()
+	if err != nil {
 		log.Println(err)
 		return 1
 	}
