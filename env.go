@@ -27,7 +27,7 @@ func SetEnv() (*EnvConfig, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "verification token not found")
 	}
-	botToken, err := lookUpEnv("BOT_TOKEN")
+	botToken, err := lookUpEnv("BOT_OAUTH_USER_TOKEN")
 	if err != nil {
 		return nil, errors.Wrap(err, "bot token not found")
 	}

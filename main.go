@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -24,6 +25,8 @@ func run() int {
 		return 1
 	}
 
+	fmt.Println(env)
+
 	api := slack.New(env.BotToken)
 	s := &Slack{
 		client:    api,
@@ -35,10 +38,10 @@ func run() int {
 	go rtm.ManageConnection()
 
 	for msg := range rtm.IncomingEvents {
-		switch ev := msg.Data.(type) {
+		switch event := msg.Data.(type) {
 		case *slack.MessageEvent:
 			log.Println("[INFO] get message")
-			if err := s.TopicsPostHandler(ev); err != nil {
+			if err := s.TopicsPostHandler(event); err != nil {
 				log.Println("[ERROR] message handler failed: %v\n", err)
 			}
 		}
