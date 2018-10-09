@@ -23,14 +23,16 @@ func (s *Slack) TopicsPostHandler(event *slack.MessageEvent) error {
 	}
 
 	if !strings.HasPrefix(event.Msg.Text, fmt.Sprintf("<@%s> ", s.botID)) {
+		log.Println(event.Msg.Text)
+		log.Println(s.botID)
 		return nil
 	}
 
 	m := strings.Split(strings.TrimSpace(event.Msg.Text), " ")[1:]
 	var label string
 	switch m[0] {
-	case "hey":
-		label = "hello, help?"
+	case "todays":
+		label = "hello!!!"
 	default:
 		return nil
 	}
