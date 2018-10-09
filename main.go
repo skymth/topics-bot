@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -24,8 +23,6 @@ func run() int {
 		log.Println(err)
 		return 1
 	}
-
-	fmt.Println(env)
 
 	api := slack.New(env.BotToken)
 	s := &Slack{
