@@ -36,7 +36,7 @@ func (s *Slack) TopicsPostHandler(event *slack.MessageEvent) error {
 		return nil
 	}
 
-	if !strings.HasPrefix(event.Msg.Text, fmt.Sprintf("<@%s> ", s.botID)) {
+	if !strings.HasPrefix(event.Msg.Text, fmt.Sprintf("リマインダー : <@%s> ", s.botID)) {
 		log.Println(event.Msg.Text)
 		log.Println(s.botID)
 		return nil
@@ -44,7 +44,7 @@ func (s *Slack) TopicsPostHandler(event *slack.MessageEvent) error {
 
 	m := strings.Split(strings.TrimSpace(event.Msg.Text), " ")[1:]
 
-	switch m[0] {
+	switch m[2] {
 	case "todays":
 		topics, err := topics.GetTopics()
 		if err != nil {
