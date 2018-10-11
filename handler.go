@@ -45,7 +45,7 @@ func (s *Slack) TopicsPostHandler(event *slack.MessageEvent) error {
 	m := strings.Split(strings.TrimSpace(event.Msg.Text), " ")[1:]
 
 	switch m[2] {
-	case "todays":
+	case "todays.":
 		topics, err := topics.GetTopics()
 		if err != nil {
 			return errors.Wrap(err, "get topics err")
