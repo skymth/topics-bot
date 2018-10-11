@@ -24,7 +24,7 @@ func setParams(topic topics.Topic) slack.PostMessageParameters {
 }
 
 func (s *Slack) send(event, label string, params slack.PostMessageParameters) error {
-	if _, _, err := s.client.PostMessage(event, label, params); err != nil {
+	if _, _, err := s.client.PostMessage(event, slack.MsgOptionText(label, false), slack.MsgOptionPostMessageParameters(params)); err != nil {
 		return err
 	}
 	return nil
@@ -36,7 +36,7 @@ func (s *Slack) TopicsPostHandler(event *slack.MessageEvent) error {
 		return nil
 	}
 
-	if !strings.HasPrefix(event.Msg.Text, fmt.Sprintf("リマインダー : <@%s> ", s.botID)) {
+	if !strings.HasPrefix(event.Msg.Text, fmt.Sprintf("リマインダー : <@%s", s.botID)) {
 		log.Println(event.Msg.Text)
 		log.Println(s.botID)
 		return nil
