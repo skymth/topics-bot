@@ -10,21 +10,17 @@ import (
 	"github.com/skymth/topics-bot/topics"
 )
 
-func setParams(topic topics.Topic) slack.PostMessageParameters {
-	return slack.PostMessageParameters{
-		Attachments: []slack.Attachment{
-			slack.Attachment{
-				Color:     "#5df91b",
-				Title:     topic.Title,
-				TitleLink: topic.URL,
-				Text:      topic.Description,
-			},
-		},
+func setParams(topic topics.Topic) slack.Attachment {
+	return slack.Attachment{
+		Color:     "#5df91b",
+		Title:     topic.Title,
+		TitleLink: topic.URL,
+		Text:      topic.Description,
 	}
 }
 
-func (s *Slack) send(event, label string, params slack.PostMessageParameters) error {
-	if _, _, err := s.client.PostMessage(event, slack.MsgOptionText(label, false), slack.MsgOptionPostMessageParameters(params)); err != nil {
+func (s *Slack) send(event, label string, params slack.Attachment) error {
+	if _, _, err := s.client.PostMessage(event, slack.MsgOptionText(label, false), slack.MsgOptionAttachments(params)); err != nil {
 		return err
 	}
 	return nil
@@ -32,7 +28,7 @@ func (s *Slack) send(event, label string, params slack.PostMessageParameters) er
 
 func (s *Slack) TopicsPostHandler(event *slack.MessageEvent) error {
 	if event.Channel != s.channelID {
-		log.Println("expect: %s\nactual: %s", event.Channel, s.channelID)
+		log.Printf("expect: %s\nactual: %s\n", event.Channel, s.channelID)
 		return nil
 	}
 
@@ -51,6 +47,7 @@ func (s *Slack) TopicsPostHandler(event *slack.MessageEvent) error {
 			return errors.Wrap(err, "get topics err")
 		}
 		for _, topic := range topics {
+			log.Println(topic)
 			if err := s.send(event.Channel, "", setParams(topic)); err != nil {
 				return errors.Wrap(err, "send topics err")
 			}
